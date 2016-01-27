@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="tool.js"></script>
+</head>
+<body>
+<a href="#?name=11111&zz=haorooms">aaa</a>
+<button id="bt">按钮</button>
+    <script>
+        var url = "http://www.aaa.com?name=222&zz=dsfsd"
+        document.getElementById('bt').addEventListener('click',function(){
+            var a =Tool.getQueryString('zz');
+            console.log(a)
+        })
+    </script>
+</body>
+</html>
+
+
+
