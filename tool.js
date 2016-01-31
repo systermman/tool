@@ -70,7 +70,13 @@
         isNumeric: function( obj ) {
             return !isNaN( parseFloat(obj) ) && isFinite( obj );
         }
-    })
+    });
+    //检测类型
+    Tool.extend({
+        isWeiXin:function(){
+            return /MicroMessenger/i.test(navigator.userAgent);
+        }
+    });
     //获取?后面所有参数
     Tool.getQueryParas = function() {
        var url = window.location.search;
