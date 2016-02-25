@@ -110,6 +110,7 @@
         },
         //测试对象是否是纯粹的对象
         isPlainObject: function( obj ) {
+            console.log(obj.constructor)
             //如果参数是对象类型 不是WINDOW对象 没有构造函数
             if(Tool.type(obj) === 'object'&&!Tool.isWindow(obj)&&obj.constructor){
                 return true;
