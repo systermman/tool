@@ -3,17 +3,20 @@
  */
 ;
 (function (window) {
-
-    var Tool = function () {
-        return new Tool.prototype.init();
+    var document = window.document;
+    var Tool = function (selector) {
+        return new Tool.prototype.init(selector);
     }
     var class2type = {};
     Tool.fn = Tool.prototype = {
         //构造函数
-        init: function () {
-            console.log('我是内部构造函数');
+        init: function (selector) {
             return this;
         },
+        length: 0,
+        size: function() {
+        return this.length;
+    },
         constructor: Tool,
         versions: "1.1.0",
 
@@ -36,14 +39,23 @@
         }
         return target;
     }
-    //全局工具方法
-    Tool.extend({
-        each: function (objArray, funName) {
+    //返回Tool 工具参数自带所有方法
+    Tool.key = function(obj){
+        var ObejctKey = {};
+        var obj = obj ? obj : Tool;
+        for(p in obj){
+            ObejctKey[p] = obj[p];
+        }
+        return ObejctKey;
+    }
+    Tool.each = function (objArray, funName) {
             //功能: 用函数 funName 对数组 objArray 中的每个值进行处理一次，
             for (var i = 0; i < objArray.length; i++) {
                 funName(i,objArray[i]);
             }
-        },
+        }
+    //Tool 类型检测
+    Tool.extend({
         type:function(e) {
             if ( e == null ) {
                 return String( e );
@@ -51,6 +63,26 @@
             return typeof e === "object" || typeof e === "function" ?
             class2type[ toString.call(e) ] || "object" :
                 typeof e;
+        },
+        //检测一个对象是否包含某个属性
+        hasPrototype:function(object,name){
+            return object.hasOwnProperty ? object.hasOwnProperty(name) : (name in object);
+        },
+        //检测对象是否为空
+        isEmptyObject: function( obj ) {
+            var name;
+            for ( name in obj ) {
+                return false;
+            }
+            return true;
+         },
+        //判断是否是window对象
+        isWindow: function( obj ) {
+            return obj != null && obj == obj.window;
+        },
+        //判断是否是一个函数
+        isFunction: function( obj ) {
+            return jQuery.type(obj) === "function";
         },
         //判断是否是数组
         isArray: function (e) {
@@ -64,19 +96,28 @@
         isUndefined: function (e) {
             return e === void 0;
         },
+        //判断是否无穷大
         isNaN: function (e) {
             return e !== e;
         },
+        //判断是否是纯碎的数字
         isNumeric: function( obj ) {
             return !isNaN( parseFloat(obj) ) && isFinite( obj );
-        }
-    });
-    //检测类型
-    Tool.extend({
+        },
+        //判断是否是微信
         isWeiXin:function(){
             return /MicroMessenger/i.test(navigator.userAgent);
+        },
+        //测试对象是否是纯粹的对象
+        isPlainObject: function( obj ) {
+            //如果参数是对象类型 不是WINDOW对象 没有构造函数
+            if(Tool.type(obj) === 'object'&&!Tool.isWindow(obj)&&obj.constructor){
+                return true;
+            }
+                return false;
+            
         }
-    });
+        });
     //获取?后面所有参数
     Tool.getQueryParas = function() {
        var url = window.location.search;
@@ -91,16 +132,32 @@
         }
         return theRequest;
     }
-
+    //返回?后面指定的参数
     Tool.getQueryString = function(Paras){
         return Tool.getQueryParas()[Paras]
     }
-
+    //数字不够自动补齐
+    Tool.fill=function (number, slice, fill, beginSlice) {
+        var fills = '';
+        var slice = slice ? slice : 2;
+        var fill =  fill ? fill :'0';
+        var beginSlice = beginSlice ? beginSlice : 0;
+        //如果传进来的数小于需要延伸的数
+        if (String(number).length < slice) {
+            var fillLenght = slice - String(number).length;
+            for (var i = 0; i < fillLenght; i++) {
+                fills += '' + fill;
+            }
+        }
+        fills += number;
+        return beginSlice > 0 ? fills.slice(0, beginSlice) : fills.slice(-slice);
+    }
     Tool.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
         class2type[ "[object " + name + "]" ] = name.toLowerCase();
     });
+
     Tool.fn.init.prototype = Tool.fn;
-    window.Tool = window.$ = Tool;
+    window.Tool = T = Tool;
 })(window);
 //浏览器检测
 ;(function($){
