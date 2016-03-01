@@ -137,6 +137,7 @@
     Tool.getQueryString = function(Paras){
         return Tool.getQueryParas()[Paras]
     }
+    //数字不够自动补齐
     //字符操作扩展
     Tool.fill=function (number, slice, fill, beginSlice) {
         var fills = '';
