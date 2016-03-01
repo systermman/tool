@@ -3,19 +3,104 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script src="jquery-2.0.2.js"></script>
     <script src="tool.js"></script>
 </head>
 <body>
-    <script>
-    /*  
-* 用来遍历指定对象所有的属性名称和值  
-* obj 需要遍历的对象  
-* author: Jet Mah  
-*/   
-   		//console.log(T.key())
-   		var a = []
-   		console.log(T.isPlainObject({}))
-    </script>
+<h3>JS实现3级联动</h3>
+	<select id="P"><option value="-1">--请选择--</option></select> 省
+	<select id="C"><option value="-1">--请选择--</option></select> 市
+	<select id="D"><option value="-1">--请选择--</option></select> 地区
+<script type="text/javascript">
+	var _province;
+	var _city;
+	var _regions;
+	var P = $("#P");
+	var C = $("#C");
+	var D = $("#D");
+	//参数插入数据源，当前对象，数据，区域
+	function addOption(ele,that,data,isN){
+		$.each(data,function(i,v){
+	  			if(v.n == that){
+	  				if(isN){
+	  					
+
+	  					if(that == '北京'||that == '上海'){
+	  						_city = v.s;
+	  						removeData(D,false);
+	  						$.each(_city,function(j,s){
+	  							console.log(s.n)
+		  						var option = "<option value='" +s.n + "'>" + s.n + "</option>";
+				  				D.append(option);
+	  						});
+	  					}else{
+	  						_city = v.s;
+		  					$.each(_city,function(j,s){
+		  						var option = "<option value='" +s.n + "'>" + s.n + "</option>";
+				  				ele.append(option);
+	  						});
+	  					}
+	  					
+	  				}else{
+	  					_regions = v.s;
+		  				$.each(_regions,function(j,s){
+				  			var option = "<option value='" +s + "'>" + s + "</option>";
+				  			ele.append(option);
+	  					});
+	  				}
+	  				return false;
+	  			}
+	  		});
+	}
+	function removeData(ele,isAll){
+		if(isAll){
+			ele.find("option").remove();
+		}else{
+			if(ele.children().length>1){
+  				ele.find("option:gt(0)").remove();
+  			}
+		}
+		
+	}
+	$.get("citydata_v2.json", function(data){
+		console.log(data)
+  		$.each(data,function(i,v){
+  			var option = "<option value='" +v.n + "'>" + v.n + "</option>";
+  			P.append(option);
+  		});
+  		P.change(function () {
+  			removeData(C,false);
+  			removeData(D,false);
+  			var that = $(this).val();
+  			addOption(C,that,data,true);
+	  		/*$.each(data,function(i,v){
+	  			if(v.n == that){
+	  				_city = v.s;
+	  				$.each(_city,function(j,s){
+			  			var option = "<option value='" +s.n + "'>" + s.n + "</option>";
+			  			C.append(option);
+  					});
+	  				return false;
+	  			}
+	  		});*/
+		});
+		C.change(function(){
+			removeData(D,false);
+  			var that = $(this).val();
+  			addOption(D,that,_city,false);
+	  		/*$.each(_city,function(i,v){
+	  			if(v.n == that){
+	  				_regions = v.s;
+	  				$.each(_regions,function(j,s){
+			  			var option = "<option value='" +s + "'>" + s + "</option>";
+			  			D.append(option);
+  					});
+	  				return false;
+	  			}
+	  		});*/
+		})
+});
+</script>
 </body>
 </html>
 

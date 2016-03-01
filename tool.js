@@ -137,7 +137,7 @@
     Tool.getQueryString = function(Paras){
         return Tool.getQueryParas()[Paras]
     }
-    //数字不够自动补齐
+    //字符操作扩展
     Tool.fill=function (number, slice, fill, beginSlice) {
         var fills = '';
         var slice = slice ? slice : 2;
@@ -156,6 +156,7 @@
     Tool.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
         class2type[ "[object " + name + "]" ] = name.toLowerCase();
     });
+    //数组操作的扩展
 
     Tool.fn.init.prototype = Tool.fn;
     window.Tool = T = Tool;
