@@ -39,15 +39,41 @@
         }
         return target;
     }
-    //返回Tool 工具参数自带所有方法
-    Tool.key = function(obj){
-        var ObejctKey = {};
-        var obj = obj ? obj : Tool;
-        for(p in obj){
-            ObejctKey[p] = obj[p];
-        }
-        return ObejctKey;
-    }
+
+    //对象扩展
+    Tool.extend({
+        //检索object拥有的所有可枚举属性的名称
+        keys : function(obj){
+            if(!Tool.isPlainObject(obj)) return [];
+            var keys = [];
+            for(p in obj){
+                if(Tool.hasPrototype(obj,p)){
+                    keys.push(p);
+                }
+            }
+            return keys;
+        },
+        //返回Tool 工具参数自带所有方法
+        key : function(obj){
+            var ObejctKey = {};
+            var obj = obj ? obj : Tool;
+            for(p in obj){
+                ObejctKey[p] = obj[p];
+            }
+            return ObejctKey;
+        },
+        //返回object对象所有的属性值。
+        values : function(obj){
+            if(!Tool.isPlainObject(obj)) return [];
+            var values = [];
+            for(p in obj){
+                if(Tool.hasPrototype(obj,p)){
+                    values.push(obj[p]);
+                }
+            }
+            return values;
+        },
+    });
     Tool.each = function (objArray, funName) {
             //功能: 用函数 funName 对数组 objArray 中的每个值进行处理一次，
             for (var i = 0; i < objArray.length; i++) {
@@ -64,9 +90,18 @@
             class2type[ toString.call(e) ] || "object" :
                 typeof e;
         },
-        //检测一个对象是否包含某个属性
+        //检测一个对象是否包含一个建
+        /**
+         *
+         * @param object 需要判断的对象
+         * @param name   需要是否存在的键 键参数需为字符串
+         * @returns {boolean}
+         * var stooge = {name: 'moe', age: 32}; Tool.hasPrototype(stooge,'name') // true
+         */
         hasPrototype:function(object,name){
-            return object.hasOwnProperty ? object.hasOwnProperty(name) : (name in object);
+            if(Tool.isPlainObject(object)){
+                return object.hasOwnProperty ? object.hasOwnProperty(name) : (name in object);
+            }
         },
         //检测对象是否为空
         isEmptyObject: function( obj ) {
@@ -104,13 +139,16 @@
         isNumeric: function( obj ) {
             return !isNaN( parseFloat(obj) ) && isFinite( obj );
         },
+        //判断object 是否是原生的DOM 元素
+        isElement : function(obj) {
+            return !!(obj && obj.nodeType === 1);
+         },
         //判断是否是微信
         isWeiXin:function(){
             return /MicroMessenger/i.test(navigator.userAgent);
         },
         //测试对象是否是纯粹的对象
         isPlainObject: function( obj ) {
-            console.log(obj.constructor)
             //如果参数是对象类型 不是WINDOW对象 没有构造函数
             if(Tool.type(obj) === 'object'&&!Tool.isWindow(obj)&&obj.constructor){
                 return true;
@@ -119,6 +157,9 @@
             
         }
         });
+    Tool.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
+        class2type[ "[object " + name + "]" ] = name.toLowerCase();
+    });
     //获取?后面所有参数
     Tool.getQueryParas = function() {
        var url = window.location.search;
@@ -137,26 +178,47 @@
     Tool.getQueryString = function(Paras){
         return Tool.getQueryParas()[Paras]
     }
-    //数字不够自动补齐
     //字符操作扩展
-    Tool.fill=function (number, slice, fill, beginSlice) {
-        var fills = '';
-        var slice = slice ? slice : 2;
-        var fill =  fill ? fill :'0';
-        var beginSlice = beginSlice ? beginSlice : 0;
-        //如果传进来的数小于需要延伸的数
-        if (String(number).length < slice) {
-            var fillLenght = slice - String(number).length;
-            for (var i = 0; i < fillLenght; i++) {
-                fills += '' + fill;
+    Tool.extend({
+        /**
+         *
+         * @param number 需要填充的原数值
+         * @param slice  需要填充几个数值
+         * @param fill   填充的值 默认为字符串‘0’
+         * @param beginSlice 大于几位数开始回填
+         * @returns {string}
+         * Tool.fill(2,3,0) // 002
+         */
+        fill:function (number, slice, fill, beginSlice) {
+            var fills = '';
+            var slice = slice ? slice : 2;
+            var fill =  fill ? fill :'0';
+            var beginSlice = beginSlice ? beginSlice : 0;
+            //如果传进来的数小于需要延伸的数
+            if (String(number).length < slice) {
+                var fillLenght = slice - String(number).length;
+                for (var i = 0; i < fillLenght; i++) {
+                    fills += '' + fill;
+                }
             }
+            fills += number;
+            return beginSlice > 0 ? fills.slice(0, beginSlice) : fills.slice(-slice);
+        },
+        /**
+         * 返回截取字符串后面带点的数
+         * @param str
+         * @param number
+         * @returns {string}
+         * T.intercept('5222055',2) //52220.55
+         */
+        intercept:function(str,number){
+            var number = number ? number : 2;
+            var strBeofre = str.substring(0,str.length-number);
+            var strAfter = str.substring(str.length-number);
+            return strBeofre + '.' + strAfter;
         }
-        fills += number;
-        return beginSlice > 0 ? fills.slice(0, beginSlice) : fills.slice(-slice);
-    }
-    Tool.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
-        class2type[ "[object " + name + "]" ] = name.toLowerCase();
     });
+
     //数组操作的扩展
 
     Tool.fn.init.prototype = Tool.fn;
