@@ -3,16 +3,35 @@
  */
 ;
 (function (window) {
+    function likeArray(obj) { return typeof obj.length == 'number' }
     var document = window.document;
     var Tool = function (selector) {
         return new Tool.prototype.init(selector);
     }
+    //匹配出省，市，区以及后面的字符串
+    var regcity = /(.*)省(.*)市(.*)区(.*)/,
+    rquickExpr = /^(?:(<[\w\W]+>)[^>]*|#([\w-]*))$/;
     var class2type = {};
     Tool.fn = Tool.prototype = {
         //构造函数
         init: function (selector) {
+            /**
+             * 简单封装选择器对象
+             * @type {NodeList}
+             */
+            var found,
+                match,
+                maybeID = selector[0] == '#',
+                maybeClass = !maybeID && selector[0] == '.';
+            if(Tool.type(selector) == 'string'&&maybeID){
+                match = rquickExpr.exec( selector );
+                //匹配ID 并转成数组
+               this[0] = new Array(document.getElementById(match[2]));
+            }else{
+                this[0] = document.querySelectorAll(selector);
+            }
             return this;
-        },
+        }
         length: 0,
         size: function() {
         return this.length;
@@ -74,12 +93,24 @@
             return values;
         },
     });
-    Tool.each = function (objArray, funName) {
+    Tool.each = function(elements, callback){
+        var i, key;
+        //如果是数组
+        if (likeArray(elements)) {
+            for (i = 0; i < elements.length; i++)
+                if (callback.call(elements[i], i, elements[i]) === false) return elements
+        } else {
+            for (key in elements)
+                if (callback.call(elements[key], key, elements[key]) === false) return elements
+        }
+        return elements
+    }
+   /* Tool.each = function (objArray, funName) {
             //功能: 用函数 funName 对数组 objArray 中的每个值进行处理一次，
             for (var i = 0; i < objArray.length; i++) {
                 funName(i,objArray[i]);
             }
-        }
+        }*/
     //Tool 类型检测
     Tool.extend({
         type:function(e) {
