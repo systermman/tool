@@ -97,7 +97,6 @@
         },
     });
     Tool.each = function(elements, callback){
-
         var i, key;
         //如果是数组
         if (likeArray(elements)) {
@@ -347,6 +346,46 @@
                 }
             });
             return _arr;
+        },
+        /**
+         * 将数组转换为对象
+         * @param list
+         * @param values
+         * @returns {{}}
+         */
+        object:function(list, values) {
+            var result = {};
+            for (var i = 0, length = list && list.length; i < length; i++) {
+                if (values) {
+                    result[list[i]] = values[i];
+                } else {
+                    result[list[i][0]] = list[i][1];
+                }
+            }
+            return result;
+        },
+        /**
+         * 随机从数组中选择一个元素
+         * @param {Array} target 目标数组
+         * @return {Array}
+         */
+        random:function (arr){
+            return target[Math.floor(Math.random() * target.length)];
+        },
+        /**
+         * 对数组进行洗牌
+         * @param {Array} target 目标数组
+         * @return {Array}
+         */
+        shuffle:function(arr){
+            var j, x, i = arr.length;
+            while(i > 0){
+                j = Math.floor(Math.random() * i--);
+                x = arr[i];
+                arr[i] = arr[j];
+                arr[j] = x;
+            }
+            return arr;
         }
     });
     //日期扩展
@@ -357,7 +396,7 @@
 //浏览器版本检测
 ;(function(T){
     function detect(ua, platform){
-        console.log(this)
+
     }
    detect.call(T, navigator.userAgent, navigator.platform)
 })(Tool)
