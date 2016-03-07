@@ -112,17 +112,20 @@
     };
     Tool.map = function(elements, callback){
         var value, values = [], i, key;
-        if (likeArray(elements))
+        if (likeArray(elements)){
             for (i = 0; i < elements.length; i++) {
-                value = callback(elements[i], i)
-                if (value != null) values.push(value)
+                value = callback(elements[i], i);
+                if (value != null) {values.push(value)}
             }
-        else
+        } 
+        else{
             for (key in elements) {
                 value = callback(elements[key], key)
-                if (value != null) values.push(value)
+                if (value != null) {values.push(value)}
             }
-        return flatten(values)
+        }
+
+        return values;
     };
     //Tool 类型检测
     Tool.extend({
@@ -246,7 +249,7 @@
             if (String(number).length < slice) {
                 var fillLenght = slice - String(number).length;
                 for (var i = 0; i < fillLenght; i++) {
-                    fills += '' + fill;
+                    fills += fill;
                 }
             }
             fills += number;
@@ -346,8 +349,15 @@
             return _arr;
         }
     });
-
     //日期扩展
     Tool.fn.init.prototype = Tool.fn;
     window.Tool = T = Tool;
 })(window);
+
+//浏览器版本检测
+;(function(T){
+    function detect(ua, platform){
+        console.log(this)
+    }
+   detect.call(T, navigator.userAgent, navigator.platform)
+})(Tool)
