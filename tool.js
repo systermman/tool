@@ -61,7 +61,31 @@
         }
         return target;
     }
+    /***
+     * 实现重载函数
+     *  /*addMethod(ninja,'whatever',function(){
+            console.log('ok');
+        })
+     addMethod(ninja,'whatever',function(name){
+            console.log(name);
+        })
+        addMethod(ninja,'whatever',function(name,age){
+            console.log(name);
+            console.log(age)
+        })
+        ninja.whatever('小明',16)
+     */
+    Tool.addMethod = function(object,name,fn){
+        var old = object[name];
+        object[name] = function(){
+            if(fn.length == arguments.length){
+                return fn.apply(this,arguments)
+            }else if(typeof old == 'function'){
 
+                return old.apply(this,arguments)
+            }
+        }
+    }
     //对象扩展
     Tool.extend({
         //检索object拥有的所有可枚举属性的名称
@@ -139,6 +163,7 @@
         },
         //检测一个对象是否包含一个建
         /**
+         *
          *
          * @param object 需要判断的对象
          * @param name   需要是否存在的键 键参数需为字符串
@@ -279,21 +304,13 @@
        unique:function(arr) {
             var res = [],json = {};
             for(var i = 0; i < arr.length; i++){
+                
                 if(!json[arr[i]]){
                     res.push(arr[i]);
                     json[arr[i]] = true;
                 }
             }
-            var len=res.length, tmp;
-            for(var i=0;i<len-1;i++){
-                for(var j=0;j<len-1-i;j++){
-                    if(res[j]>res[j+1]){
-                        tmp = res[j];
-                        res[j] = res[j+1];
-                        res[j+1] = tmp;
-                    }
-                }
-            }
+
             return res;
         },
         /**
@@ -400,3 +417,4 @@
     }
    detect.call(T, navigator.userAgent, navigator.platform)
 })(Tool)
+
