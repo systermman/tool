@@ -3,16 +3,21 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="jquery-2.0.2.js"></script>
+    <script src="lib/jquery-2.0.2.js"></script>
+    <script src="lib/lodash.js"></script>
     <script src="tool.js"></script>
+    <script src="tool_array.js"></script>
+    <script src="tool_detect.js"></script>
+    <script src="tool_object.js"></script>
 </head>
 <body>
-<div id="A" class="abc">afaf2</div>
-<input type="text" id="text1"/>
-<script type="text/javascript">
-   console.log(Tool.os.tablet)
-</script>
+
 </body>
+<script>
+   //对数组进行操作
+    var _obj = Tool.object(['moe', 'larry', 'curly'], [30, 40, 50]);
+    console.log(_obj)
+</script>
 </html>
 
 

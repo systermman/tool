@@ -1,6 +1,9 @@
 /**
  * Created by admin on 2016/1/26.
  */
+/**
+ * Tool 库 基本框架
+ */
 ;
 (function (window) {
     function likeArray(obj) { return typeof obj.length == 'number' }
@@ -86,40 +89,6 @@
             }
         }
     }
-    //对象扩展
-    Tool.extend({
-        //检索object拥有的所有可枚举属性的名称
-        keys : function(obj){
-            if(!Tool.isPlainObject(obj)) return [];
-            var keys = [];
-            for(p in obj){
-                if(Tool.hasPrototype(obj,p)){
-                    keys.push(p);
-                }
-            }
-            return keys;
-        },
-        //返回Tool 工具参数自带所有方法
-        key : function(obj){
-            var ObejctKey = {};
-            var obj = obj ? obj : Tool;
-            for(p in obj){
-                ObejctKey[p] = obj[p];
-            }
-            return ObejctKey;
-        },
-        //返回object对象所有的属性值。
-        values : function(obj){
-            if(!Tool.isPlainObject(obj)) return [];
-            var values = [];
-            for(p in obj){
-                if(Tool.hasPrototype(obj,p)){
-                    values.push(obj[p]);
-                }
-            }
-            return values;
-        },
-    });
     Tool.each = function(elements, callback){
         var i, key;
         //如果是数组
@@ -192,7 +161,7 @@
         },
         //判断是否是一个函数
         isFunction: function( obj ) {
-            return jQuery.type(obj) === "function";
+            return Tool.type(obj) === "function";
         },
         //判断是否是数组
         isArray: function (e) {
@@ -234,7 +203,6 @@
         });
     Tool.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
         class2type[ "[object " + name + "]" ] = name.toLowerCase();
-
     });
     //获取?后面所有参数
     Tool.getQueryParas = function() {
@@ -293,178 +261,9 @@
             return strBeofre + '.' + strAfter;
         }
     });
-
-    //数组操作的扩展
-    Tool.extend({
-        /**
-         * 传入需要去重的数组
-         * @param arr
-         * @returns {Array}
-         */
-       unique:function(arr) {
-            var res = [],json = {};
-            for(var i = 0; i < arr.length; i++){
-                if(!json[arr[i]]){
-                    res.push(arr[i]);
-                    json[arr[i]] = true;
-                }
-            }
-            return res;
-        },
-        /**
-         * 得到数组中的第一位数
-         * @param arr
-         * @returns {*}
-         */
-        first:function(arr){
-            return arr[0];
-        },
-        /**
-         * 默认得到除了最后一位的数组，传入参数得到除了末尾N个数的值
-         * @param arr
-         * @param n
-         * @returns {*}
-         */
-        initial:function(arr,n){
-            return Tool.isUndefined(n) ? arr.slice(0,arr.length - 1) : arr.slice(0,arr.length - n);
-        },
-        rest:function(arr,n){
-            return Tool.isUndefined(n) ? arr.slice(1) : arr.slice(n);
-        },
-        /**
-         * 返回数据中最后一位
-         * @param arr
-         * @param n
-         * @returns {*}
-         */
-        last:function(arr,n){
-            return arr[arr.length-1];
-        },
-        /**
-         * 根据数组索引得到值
-         * @param arr
-         * @param n
-         */
-        get:function(arr,n){
-            return arr[n];
-        },
-        /**
-         * 返回除了自身数以外的数组
-         * @param arr 传递的参数为索引
-         * @param n
-         */
-        sibling:function(arr,n){
-            var _arr = [];
-            Tool.each(arr,function(i,v){
-                if(i!=n){
-                    _arr.push(v);
-                }
-            });
-            return _arr;
-        },
-        /**
-         * 将数组转换为对象
-         * @param list
-         * @param values
-         * @returns {{}}
-         */
-        object:function(list, values) {
-            var result = {};
-            for (var i = 0, length = list && list.length; i < length; i++) {
-                if (values) {
-                    result[list[i]] = values[i];
-                } else {
-                    result[list[i][0]] = list[i][1];
-                }
-            }
-            return result;
-        },
-        /**
-         * 随机从数组中选择一个元素
-         * @param {Array} target 目标数组
-         * @return {Array}
-         */
-        random:function (arr){
-            return target[Math.floor(Math.random() * target.length)];
-        },
-        /**
-         * 对数组进行洗牌
-         * @param {Array} target 目标数组
-         * @return {Array}
-         */
-        shuffle:function(arr){
-            var j, x, i = arr.length;
-            while(i > 0){
-                j = Math.floor(Math.random() * i--);
-                x = arr[i];
-                arr[i] = arr[j];
-                arr[j] = x;
-            }
-            return arr;
-        }
-    });
-    //日期扩展
     Tool.fn.init.prototype = Tool.fn;
     window.Tool = T = Tool;
 })(window);
 
-//浏览器版本检测
-;(function(T){
-    function detect(ua, platform){
-          var os = this.os = {}, browser = this.browser = {},
-          webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
-          android = ua.match(/(Android);?[\s\/]+([\d.]+)?/),
-          osx = !!ua.match(/\(Macintosh\; Intel /),
-          ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
-          ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
-          iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
-          webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
-          win = /Win\d{2}|Windows/.test(platform),
-          wp = ua.match(/Windows Phone ([\d.]+)/),
-          touchpad = webos && ua.match(/TouchPad/),
-          kindle = ua.match(/Kindle\/([\d.]+)/),
-          silk = ua.match(/Silk\/([\d._]+)/),
-          blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/),
-          bb10 = ua.match(/(BB10).*Version\/([\d.]+)/),
-          rimtabletos = ua.match(/(RIM\sTablet\sOS)\s([\d.]+)/),
-          playbook = ua.match(/PlayBook/),
-          chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
-          firefox = ua.match(/Firefox\/([\d.]+)/),
-          firefoxos = ua.match(/\((?:Mobile|Tablet); rv:([\d.]+)\).*Firefox\/[\d.]+/),
-          ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/),
-          webview = !chrome && ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/),
-          safari = webview || ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/)
-          if (browser.webkit = !!webkit) browser.version = webkit[1]
-            if (android) os.android = true, os.version = android[2]
-            if (iphone && !ipod) os.ios = os.iphone = true, os.version = iphone[2].replace(/_/g, '.')
-            if (ipad) os.ios = os.ipad = true, os.version = ipad[2].replace(/_/g, '.')
-            if (ipod) os.ios = os.ipod = true, os.version = ipod[3] ? ipod[3].replace(/_/g, '.') : null
-            if (wp) os.wp = true, os.version = wp[1]
-            if (webos) os.webos = true, os.version = webos[2]
-            if (touchpad) os.touchpad = true
-            if (blackberry) os.blackberry = true, os.version = blackberry[2]
-            if (bb10) os.bb10 = true, os.version = bb10[2]
-            if (rimtabletos) os.rimtabletos = true, os.version = rimtabletos[2]
-            if (playbook) browser.playbook = true
-            if (kindle) os.kindle = true, os.version = kindle[1]
-            if (silk) browser.silk = true, browser.version = silk[1]
-            if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
-            if (chrome) browser.chrome = true, browser.version = chrome[1]
-            if (firefox) browser.firefox = true, browser.version = firefox[1]
-            if (firefoxos) os.firefoxos = true, os.version = firefoxos[1]
-            if (ie) browser.ie = true, browser.version = ie[1]
-            if (safari && (osx || os.ios || win)) {
-              browser.safari = true
-              if (!os.ios) browser.version = safari[1]
-            }
-            if (webview) browser.webview = true
 
-            os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) ||
-              (firefox && ua.match(/Tablet/)) || (ie && !ua.match(/Phone/) && ua.match(/Touch/)))
-            os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || webos || blackberry || bb10 ||
-              (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) ||
-              (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
-    }
-   detect.call(T, navigator.userAgent, navigator.platform);
-})(Tool);
 
